@@ -1,30 +1,43 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, make_response
+
+from routes.autores import autores_bp
+from routes.livros import livros_bp
+from routes.auth import auth_bp
 
 app = Flask(__name__)
 
-@app.route("/")
-def start():
-    return "Primeiro Projeto"
+app.register_blueprint(autores_bp)
+app.register_blueprint(livros_bp)
+app.register_blueprint(auth_bp)
 
-@app.route("/curso")
-def curso():
+@app.errorhandler(404)
+def erroderota(erro):
     return jsonify({
-        "curso": "Engenharia de Software"
-    })
+        "erro": True,
+        "Aviso": "Rota não encontrada",
+        "Status": 404
+    }), 404
 
-@app.route("/professor")
-def professor():
+@app.route("/", methods=["GET"])
+def inicio():
+
     return jsonify({
-        "professor": "Elias"
+        "Informações": "API de Biblioteca",
+        "Versao": "3.0"
     })
 
-@app.route("/professor/<nome>")
-def professorX(nome):
-    return jsonify ({
-        "nome": nome,
-        "curso": "Engenharia de Software",
-        "Numero": "1"
-    })
+@app.route("/status", methods=["GET"])
+def verificacao():
+    resposta = make_response(
+        jsonify({
+            "Aviso": "API estável",
+            "Nível": "OK"
+        }), 200
+    )
+
+    resposta.headers["API"] = "Versao4.0"
+
+    return resposta
 
 if __name__ == "__main__":
     app.run(debug=True)
