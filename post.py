@@ -1,15 +1,15 @@
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-@app.route("/cadastro", methods=["POST"])
-def cadastro():
+@app.route("/produto", methods=["POST"])
+def produto():
 
-    dados = request.get_json()
+    id = request.get_json()
 
     return jsonify({
-        "mensagem": "Cadastro realizado",
-        "dados": dados
+        "Produto": "Produto cadastro",
+        "id": id
     })
 
 if __name__ == "__main__":

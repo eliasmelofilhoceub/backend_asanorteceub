@@ -3,52 +3,32 @@ import sqlite3
 
 app = Flask(__name__)
 
-# ==========================================
-# CONEXÃO COM O BANCO DE DADOS
-# ==========================================
-
 def conectar_banco():
     conexao = sqlite3.connect("biblioteca.db")
     conexao.row_factory = sqlite3.Row
     return conexao
 
-
-# ==========================================
-# CRIAÇÃO DA TABELA
-# ==========================================
-
 def criar_tabela():
-
     conexao = conectar_banco()
 
     conexao.execute("""
-        CREATE TABLE IF NOT EXISTS livros (
+        CREATE TABLE IF NOT EXISTS livros(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             titulo TEXT NOT NULL,
             autor TEXT NOT NULL
-        )
+        ) 
     """)
 
     conexao.commit()
     conexao.close()
 
-
-# ==========================================
-# ROTA INICIAL
-# ==========================================
-
 @app.route("/", methods=["GET"])
 def inicio():
 
     return jsonify({
-        "mensagem": "API da Biblioteca",
-        "versao": "1.0"
+        "Informações": "API Geral de Livros",
+        "Versao": "1.0"
     })
-
-
-# ==========================================
-# CREATE - CADASTRAR LIVRO
-# ==========================================
 
 @app.route("/livros", methods=["POST"])
 def cadastrar_livro():
@@ -75,20 +55,15 @@ def cadastrar_livro():
     conexao.close()
 
     return jsonify({
-        "mensagem": "Livro cadastrado com sucesso!",
+        "Aviso": "Livro cadastrado com sucesso!!!",
         "id": id_livro,
         "titulo": titulo,
         "autor": autor
-    }), 201
-
-
-# ==========================================
-# READ - LISTAR TODOS OS LIVROS
-# ==========================================
+    }), 200
 
 @app.route("/livros", methods=["GET"])
 def listar_livros():
-
+    
     conexao = conectar_banco()
 
     livros = conexao.execute(
@@ -99,13 +74,8 @@ def listar_livros():
 
     return jsonify([
         dict(livro)
-        for livro in livros
+        for livro in livros  
     ])
-
-
-# ==========================================
-# READ - BUSCAR LIVRO POR ID
-# ==========================================
 
 @app.route("/livros/<int:id>", methods=["GET"])
 def buscar_livro(id):
@@ -122,18 +92,13 @@ def buscar_livro(id):
     if livro is None:
 
         return jsonify({
-            "erro": "Livro não encontrado!"
+            "Aviso": "Livro nao encontrado!!!"
         }), 404
 
     return jsonify(dict(livro))
 
-
-# ==========================================
-# UPDATE - ATUALIZAR LIVRO
-# ==========================================
-
 @app.route("/livros/<int:id>", methods=["PUT"])
-def atualizar_livro(id):
+def atualizar(id):
 
     dados = request.get_json()
 
@@ -158,20 +123,15 @@ def atualizar_livro(id):
     if resultado.rowcount == 0:
 
         return jsonify({
-            "erro": "Livro não encontrado!"
+            "Erro": "Livro nao encontrado."
         }), 404
-
+    
     return jsonify({
-        "mensagem": "Livro atualizado com sucesso!"
+        "Aviso": "Livro atualizado com sucesso!!!"
     })
 
-
-# ==========================================
-# DELETE - EXCLUIR LIVRO
-# ==========================================
-
 @app.route("/livros/<int:id>", methods=["DELETE"])
-def excluir_livro(id):
+def exclusao(id):
 
     conexao = conectar_banco()
 
@@ -181,23 +141,17 @@ def excluir_livro(id):
     )
 
     conexao.commit()
-
     conexao.close()
 
     if resultado.rowcount == 0:
 
         return jsonify({
-            "erro": "Livro não encontrado!"
+            "Erro": "Livro nao encontrado."
         }), 404
-
+    
     return jsonify({
-        "mensagem": "Livro excluído com sucesso!"
+        "Aviso": "Livro excluido com sucesso!!!"
     })
-
-
-# ==========================================
-# INICIAR SERVIDOR
-# ==========================================
 
 if __name__ == "__main__":
 
