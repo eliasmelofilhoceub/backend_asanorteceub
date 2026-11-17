@@ -2,115 +2,93 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# Banco de dados em memória
-livros = [
-    {
-        "id": 1,
-        "titulo": "Dom Casmurro",
-        "autor": "Machado de Assis"
-    },
-    {
-        "id": 2,
-        "titulo": "1984",
-        "autor": "George Orwell"
-    }
-]
-
-# Página inicial
 @app.route("/")
-def inicio():
+def start():
     return jsonify({
-        "mensagem": "API Biblioteca",
+        "biblioteca": "API",
         "versao": "1.0"
     })
 
-# ==========================
-# READ - Listar todos os livros
-# ==========================
+livros = [
+    {
+        "id": 10,
+        "titulo": "A Volta dos que nao foram",
+        "autor": "Eu"
+    },
+    {
+        "id": 11,
+        "titulo": "Caminhando e seguindo a cancao",
+        "autor": "Eu"
+    },
+    {
+        "id": 12,
+        "titulo": "Borboletinha",
+        "autor": "Eu"
+    }
+]
+
 @app.route("/livros", methods=["GET"])
-def listar_livros():
+def listar():
     return jsonify(livros)
 
-
-# ==========================
-# READ - Buscar livro por ID
-# ==========================
 @app.route("/livros/<int:id>", methods=["GET"])
-def buscar_livro(id):
+def buscar(id):
 
     for livro in livros:
         if livro["id"] == id:
             return jsonify(livro)
-
+    
     return jsonify({
-        "erro": "Livro não encontrado."
-    }), 404
+        "Erro": "Livro nao encontrado"
+    })
 
-
-# ==========================
-# CREATE - Cadastrar livro
-# ==========================
 @app.route("/livros", methods=["POST"])
-def cadastrar_livro():
-
+def cadastrar():
+    
     dados = request.get_json()
 
     livros.append(dados)
 
     return jsonify({
-        "mensagem": "Livro cadastrado com sucesso!",
-        "livro": dados
-    }), 201
+        "Aviso": "Livro cadastrado com sucesso!!!",
+        "Livro": dados
+    })
 
-
-# ==========================
-# UPDATE - Atualizar livro
-# ==========================
 @app.route("/livros/<int:id>", methods=["PUT"])
-def atualizar_livro(id):
+def atualizar(id):
 
     dados = request.get_json()
 
     for livro in livros:
-
         if livro["id"] == id:
 
             livro["titulo"] = dados["titulo"]
             livro["autor"] = dados["autor"]
 
             return jsonify({
-                "mensagem": "Livro atualizado com sucesso!",
-                "livro": livro
+                "Aviso": "Livro atualizado com sucesso!!!",
+                "Livro": livro
             })
-
+    
     return jsonify({
-        "erro": "Livro não encontrado."
-    }), 404
+        "Erro": "Livro nao encontrado"
+    })
 
-
-# ==========================
-# DELETE - Excluir livro
-# ==========================
 @app.route("/livros/<int:id>", methods=["DELETE"])
-def excluir_livro(id):
+def exclusao(id):
 
     for livro in livros:
-
         if livro["id"] == id:
 
             livros.remove(livro)
 
             return jsonify({
-                "mensagem": "Livro removido com sucesso!"
+                "Aviso": "Livro retirado com sucesso!!!"
             })
-
+    
     return jsonify({
-        "erro": "Livro não encontrado."
-    }), 404
+        "Erro": "Livro nao encontrado"
+    })
 
-
-# ==========================
-# Inicialização do servidor
-# ==========================
 if __name__ == "__main__":
     app.run(debug=True)
